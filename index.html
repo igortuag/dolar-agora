@@ -26,7 +26,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <body>
-    <p>$ 1, atualmente equivale a <span id="dolar"></span>.</p>
+    <p>$1, atualmente equivale a R$<span id="dolar"></span>.</p>
 
     <div class="chart">
       <canvas id="myChart"></canvas>
@@ -69,7 +69,7 @@
       currentDolar = bid;
 
       dolar.innerHTML = bid;
-      document.title = bid;
+      document.title = "R$" + bid;
 
       // update chart
       const label = new Date(timestamp * 1000).toLocaleTimeString(
