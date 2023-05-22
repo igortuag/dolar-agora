@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>$</title>
+  </head>
+
+  <script>
+    async function fetchDolar() {
+      const dolar = document.getElementById("dolar");
+      const url = "https://economia.awesomeapi.com.br/last/USD-BRL";
+      
+      const response = await fetch(url);
+      const data = await response.json();
+
+     const currentDolar = data.USDBRL.bid;
+
+      dolar.innerHTML = currentDolar;
+      // change title
+      document.title = `${currentDolar}`;
+    }
+
+    setTimeout(() => {
+      fetchDolar();
+    }, 1000);
+  </script>
+
+  <body>
+    <p>$ 1, atualmente equivale a <span id="dolar"></span>.</p>
+  </body>
+</html>
