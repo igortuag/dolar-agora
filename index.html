@@ -5,85 +5,69 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>$</title>
+    <!-- favicon -->
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/25/25228.png" type="image/x-icon" />
+    <style>
+      body {
+        background-color: #1c1c1c;
+        color: #ffffff;
+      }
+      .chart {
+        width: 100%;
+        max-width: 80vw;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      p {
+        text-align: center;
+        font-size: 2rem;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-
-  <style>
-    .chart {
-      width: 100%;
-      max-width: 80vw;
-      height: 80vh;
-      margin: 0 auto;
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    p {
-      text-align: center;
-      font-size: 2rem;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-  </style>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <body>
     <p>$1, atualmente equivale a R$<span id="dolar"></span>.</p>
-
     <div class="chart">
       <canvas id="myChart"></canvas>
     </div>
-  </body>
-
-  <script>
-    const config = {
-      type: "line",
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: "Dolar em real",
-            borderColor: "rgb(255, 99, 132)",
-            data: []
-          }
-        ],
+    <script>
+      const config = {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Dolar em real",
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              color: "#ffffff",
+              data: []
+            }
+          ]
+        },
+      };
+      const myChart = new Chart(document.getElementById("myChart"), config);
+      async function fetchDolar() {
+        const dolar = document.getElementById("dolar");
+        const url = "https://economia.awesomeapi.com.br/last/USD-BRL";
+        const response = await fetch(url);
+        const data = await response.json();
+        const { bid, timestamp } = data.USDBRL;
+        dolar.innerHTML = bid;
+        document.title = "R$" + bid;
+        const label = new Date(timestamp * 1000).toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+        config.data.labels.push(
+          config.data.labels.includes(label) ? "" : label
+        );
+        config.data.datasets[0].data.push(parseFloat(bid));
+        myChart.update();
       }
-    };
-
-    // init render block
-    const myChart = new Chart(document.getElementById("myChart"), config);
-
-    async function fetchDolar() {
-      const dolar = document.getElementById("dolar");
-      const url = "https://economia.awesomeapi.com.br/last/USD-BRL";
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      const { bid, timestamp } = data.USDBRL;
-
-      dolar.innerHTML = bid;
-      document.title = "R$" + bid;
-
-      // update chart
-      const label = new Date(timestamp * 1000).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-
-      // if label already exists, add empty string
-      if (config.data.labels.includes(label)) {
-        config.data.labels.push("");
-      } else {
-        config.data.labels.push(label);
-      }
-
-      const value = parseFloat(bid);
-      config.data.datasets[0].data.push(value);
-      myChart.update();
-    }
-
-    fetchDolar();
-    setInterval(() => {
       fetchDolar();
-    }, 2000);
-  </script>
+      setInterval(fetchDolar, 2000);
+    </script>
+  </body>
 </html>
