@@ -7,27 +7,88 @@
     <title>$</title>
   </head>
 
-  <script>
-    async function fetchDolar() {
-      const dolar = document.getElementById("dolar");
-      const url = "https://economia.awesomeapi.com.br/last/USD-BRL";
-      
-      const response = await fetch(url);
-      const data = await response.json();
-
-     const currentDolar = data.USDBRL.bid;
-
-      dolar.innerHTML = currentDolar;
-      // change title
-      document.title = `${currentDolar}`;
+  <style>
+    .chart {
+      width: 100%;
+      max-width: 600px;
+      height: 500px;
+      margin: 0 auto;
+      background-color: red;
     }
 
-    setTimeout(() => {
-      fetchDolar();
-    }, 1000);
-  </script>
+    p {
+      text-align: center;
+      font-size: 2rem;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <body>
     <p>$ 1, atualmente equivale a <span id="dolar"></span>.</p>
+
+    <div class="chartBox">
+      <canvas id="myChart"></canvas>
+    </div>
   </body>
+
+  <script>
+    const config = {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Dolar em real",
+            borderColor: "rgb(255, 99, 132)",
+            data: []
+          }
+        ]
+      }
+    };
+
+    // init render block
+    const myChart = new Chart(document.getElementById("myChart"), config);
+
+    let currentDolar = null;
+
+    async function fetchDolar() {
+      const dolar = document.getElementById("dolar");
+      const url = "https://economia.awesomeapi.com.br/last/USD-BRL";
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const { bid, timestamp } = data.USDBRL;
+
+      if (currentDolar === bid) {
+        return;
+      }
+
+      currentDolar = bid;
+
+      dolar.innerHTML = bid;
+      document.title = bid;
+
+      // update chart
+      const label = new Date(timestamp * 1000).toLocaleTimeString(
+        "pt-BR",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        }
+      );
+      const value = parseFloat(bid);
+      config.data.labels.push(label);
+      config.data.datasets[0].data.push(value);
+      myChart.update();
+    }
+
+    fetchDolar();
+    setInterval(() => {
+      fetchDolar();
+    }, 2000);
+  </script>
 </html>
