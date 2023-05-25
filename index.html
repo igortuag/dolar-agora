@@ -13,8 +13,7 @@
         color: #ffffff;
       }
       .chart {
-        max-width: 80vw;
-        max-height: 80vh;
+        max-width: 1022px;
         margin: 0 auto;
         background-color: rgba(255, 255, 255, 0.05);
       }
@@ -58,7 +57,7 @@
         const data = await response.json();
         const { bid, timestamp } = data.USDBRL;
         dolar.innerHTML = bid;
-        document.title = "R$" + bid;
+        document.title = bid;
         const label = new Date(timestamp * 1000).toLocaleTimeString("pt-BR", {
           hour: "2-digit",
           minute: "2-digit"
@@ -70,7 +69,7 @@
         myChart.update();
       }
       fetchDolar();
-      setInterval(fetchDolar, 2000);
+      setInterval(fetchDolar, 5000);
     </script>
   </body>
 </html>
