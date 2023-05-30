@@ -79,7 +79,8 @@
           "https://economia.awesomeapi.com.br/json/daily/USD-BRL/15"
         );
         const lastDollarData = await lastDollarResponse.json();
-        lastDollarData.forEach((dolar) => {
+        // invert array
+        lastDollarData.reverse().forEach((dolar) => {
           const { bid, timestamp } = dolar;
           // show label as mar 01
 
