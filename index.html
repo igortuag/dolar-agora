@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>$</title>
     <!-- favicon -->
-    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/25/25228.png" type="image/x-icon" />
+    <link
+      rel="shortcut icon"
+      href="https://cdn-icons-png.flaticon.com/512/25/25228.png"
+      type="image/x-icon"
+    />
     <style>
       body {
         background-color: #1c1c1c;
@@ -46,10 +50,11 @@
           ]
         },
         options: {
-          responsive: true,
+          responsive: true
         }
       };
       const myChart = new Chart(document.getElementById("myChart"), config);
+
       async function fetchDolar() {
         const dolar = document.getElementById("dolar");
         const url = "https://economia.awesomeapi.com.br/last/USD-BRL";
@@ -68,7 +73,25 @@
         config.data.datasets[0].data.push(parseFloat(bid));
         myChart.update();
       }
-      fetchDolar();
+
+      async function getDailyUsd() {
+        const lastDollarResponse = await fetch(
+          "https://economia.awesomeapi.com.br/json/daily/USD-BRL/15"
+        );
+        const lastDollarData = await lastDollarResponse.json();
+        lastDollarData.forEach((dolar) => {
+          const { bid, timestamp } = dolar;
+          const label = new Date(timestamp * 1000).toLocaleTimeString("en", {
+            day: "2-digit",
+            month: "2-digit",
+          });
+          config.data.labels.push(label);
+          config.data.datasets[0].data.push(parseFloat(bid));
+        });
+        myChart.update();
+      }
+
+      getDailyUsd();
       setInterval(fetchDolar, 5000);
     </script>
   </body>
